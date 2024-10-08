@@ -1,6 +1,6 @@
 -- MOD WEIGHTS --
 
-local ModDefs = {
+UnitDefs["armcom"].customparams.ModDefs = {
 	["big_blind"] = { 
 		weight = 50,
 		modtype = "misc",
@@ -359,9 +359,7 @@ local ModDefs = {
 		},
 	},
 }
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------ MOD EXECUTABLES -----------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------- MOD EXECUTABLES -------------------------------------------
 function exe_gmpworld()
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
@@ -1237,11 +1235,9 @@ function exe_build_only()
 		end
 	end
 end
----------------------------------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------ MODPICKING ---------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------- MOD RANDOMING -------------------------------------------
 function pick_weighted_value(roll) --picks mod from list based on roll
-	for name,md in pairs(ModDefs) do
+	for name,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do
 		if roll > md.weight then
 			roll = roll - md.weight
 		else
@@ -1255,7 +1251,7 @@ function roll_a_mod(riggedName)
 	local rolled_mod = "vanilla"
 	if not riggedName then
 		local rng_weight_total = 0
-		for name,md in pairs(ModDefs) do 
+		for name,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do 
 			rng_weight_total = rng_weight_total + md.weight
 		end
 		rolled_mod = pick_weighted_value( math.random(rng_weight_total) ) --pick a mod
@@ -1263,91 +1259,92 @@ function roll_a_mod(riggedName)
 		rolled_mod = riggedName
 	end
 	
-	ModDefs[rolled_mod].active = true
+	UnitDefs["armcom"].customparams.ModDefs[rolled_mod].active = true
 	
-	ModDefs[rolled_mod].weight = 0 --remove the mod from pool
+	UnitDefs["armcom"].customparams.ModDefs[rolled_mod].weight = 0 --remove the mod from pool
 	
-	for aname,aff in pairs(ModDefs[rolled_mod].affinity) do --apply affinities
-		ModDefs[aname].weight = ModDefs[aname].weight * aff
+	for aname,aff in pairs(UnitDefs["armcom"].customparams.ModDefs[rolled_mod].affinity) do --apply affinities
+		UnitDefs["armcom"].customparams.ModDefs[aname].weight = UnitDefs["armcom"].customparams.ModDefs[aname].weight * aff
 	end
 	
 	return rolled_mod
 end
 
-for mname,md in pairs(ModDefs) do
+for mname,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do
 	md.active = false
 end
 
------------------------------THINGDOING-----------------------------
+--------------------------------------------- THINGDOING - USER PART -------------------------------------------
+	--picking specific mods ignores weights so it can force "bad" combos,
+	--thus always pick first random later
+--roll_a_mod("deathsplode") --pick a specific mod
 roll_a_mod(false) --pick 3 random mods
 roll_a_mod(false)
 roll_a_mod(false)
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------
------------------------------------------------------------------------------ MODEXECUTION ---------------------------------------------------------------------------
----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-if ModDefs["doomworld"].active then
+--------------------------------------------- MOD EXECUTION -------------------------------------------
+if UnitDefs["armcom"].customparams.ModDefs["doomworld"].active then
 	exe_doomworld()
 end
-if ModDefs["stockpilage"].active then
+if UnitDefs["armcom"].customparams.ModDefs["stockpilage"].active then
 	exe_stockpilage()
 end
-if ModDefs["elimit"].active then
+if UnitDefs["armcom"].customparams.ModDefs["elimit"].active then
 	exe_elimit()
 end
-if ModDefs["allshield"].active and ModDefs["highlander"].active then --support for different orders
+if UnitDefs["armcom"].customparams.ModDefs["allshield"].active and UnitDefs["armcom"].customparams.ModDefs["highlander"].active then --support for different orders
 	exe_highlander()
-	exe_allshield(ModDefs["bounceworld"].active)
-elseif ModDefs["highlander"].active then
+	exe_allshield(UnitDefs["armcom"].customparams.ModDefs["bounceworld"].active)
+elseif UnitDefs["armcom"].customparams.ModDefs["highlander"].active then
 	exe_highlander()
-elseif ModDefs["allshield"].active then
-	exe_allshield(ModDefs["bounceworld"].active)
+elseif UnitDefs["armcom"].customparams.ModDefs["allshield"].active then
+	exe_allshield(UnitDefs["armcom"].customparams.ModDefs["bounceworld"].active)
 end
-if ModDefs["t1_only"].active then
+if UnitDefs["armcom"].customparams.ModDefs["t1_only"].active then
 	exe_t1_only()
 end
-if ModDefs["build_only"].active then
+if UnitDefs["armcom"].customparams.ModDefs["build_only"].active then
 	exe_build_only()
 end
-if ModDefs["beamworld"].active then
+if UnitDefs["armcom"].customparams.ModDefs["beamworld"].active then
 	exe_beamworld()
 end
-if ModDefs["railworld"].active then
+if UnitDefs["armcom"].customparams.ModDefs["railworld"].active then
 	exe_railworld()
 end
-if ModDefs["gmpworld"].active then
+if UnitDefs["armcom"].customparams.ModDefs["gmpworld"].active then
 	exe_gmpworld()
 end
-if ModDefs["sprayworld"].active then
+if UnitDefs["armcom"].customparams.ModDefs["sprayworld"].active then
 	exe_sprayworld()
 end
-if ModDefs["empworld"].active then
+if UnitDefs["armcom"].customparams.ModDefs["empworld"].active then
 	exe_empworld()
 end
-if ModDefs["craterage"].active then
+if UnitDefs["armcom"].customparams.ModDefs["craterage"].active then
 	exe_craterage()
 end
-if ModDefs["ammocost"].active then
+if UnitDefs["armcom"].customparams.ModDefs["ammocost"].active then
 	exe_ammocost()
 end
-if ModDefs["minimass"].active then
-	exe_minimass(ModDefs["railworld"].active)
+if UnitDefs["armcom"].customparams.ModDefs["minimass"].active then
+	exe_minimass(UnitDefs["armcom"].customparams.ModDefs["railworld"].active)
 end
-if ModDefs["bounceworld"].active then
-	exe_bounceworld(ModDefs["railworld"].active)
+if UnitDefs["armcom"].customparams.ModDefs["bounceworld"].active then
+	exe_bounceworld(UnitDefs["armcom"].customparams.ModDefs["railworld"].active)
 end
-if ModDefs["big_blind"].active then
+if UnitDefs["armcom"].customparams.ModDefs["big_blind"].active then
 	exe_big_blind()
 end
-if ModDefs["smol_blind"].active then
+if UnitDefs["armcom"].customparams.ModDefs["smol_blind"].active then
 	exe_smol_blind()
 end
-if ModDefs["hpregen"].active then
+if UnitDefs["armcom"].customparams.ModDefs["hpregen"].active then
 	exe_hpregen()
 end
-if ModDefs["junkscape"].active then
+if UnitDefs["armcom"].customparams.ModDefs["junkscape"].active then
 	exe_junkscape()
 end
-if ModDefs["deathsplode"].active then
+if UnitDefs["armcom"].customparams.ModDefs["deathsplode"].active then
 	exe_deathsplode()
 end
