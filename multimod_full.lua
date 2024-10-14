@@ -377,32 +377,38 @@ function exe_gmpworld()
 					( wud.weapontype == "LightningCannon" )
 				)
 				
-				if wtypegood then		
-					wud.sprayAngle = 7000
+				if wtypegood then
+					wud.sprayAngle = 5600
 					if wud.projectiles then
 						wud.projectiles = wud.projectiles * 5
 					else
 						wud.projectiles = 5
+					end
+					if wud.turnrate then
+						wud.wobble = wud.turnrate * 2.33
+					elseif ( wud.weapontype == "MissileLauncher" ) then
+						wud.wobble = 8000
 					end
 					if ( wud.weapontype == "TorpedoLauncher" ) then
 						wud.waterWeapon = true
 						wud.fireSubmersed = true
 						wud.weapontype = "MissileLauncher"
 					elseif ( wud.weapontype == "StarburstLauncher" ) then
-						wud.weapontimer = 0
-						wud.flighttime = 0
-						wud.tracks = false
-						wud.hightrajectory = 1
+						wud.sprayAngle = 4000
+						wud.flighttime = 10
+						wud.trajectoryheight = 2
+						wud.weapontimer = 1
+						wud.weapontype = "MissileLauncher"
+						wud.tracks = true
+						wud.turnrate = 400
+						wud.wobble = 800
 						if wud.range then
-							wud.weaponVelocity = wud.range
+							local v = ( ( wud.range / 150 ) ^ 0.2 ) * 300
+							wud.startvelocity = v
+							wud.weaponacceleration = v * 0.3
+							wud.weaponvelocity = v * 1.1
 						end
-						wud.myGravity = 0.4
-						wud.weapontype = "Cannon"
-					end
-					if wud.turnrate then
-						wud.wobble = wud.turnrate * 2.33
-					elseif ( wud.weapontype == "MissileLauncher" ) then
-						wud.wobble = 8000
+						wud.turret = true
 					end
 					if wud.damage then
 						for dname,dud in pairs(wud.damage) do
@@ -434,25 +440,42 @@ function exe_beamworld()
 				)
 				
 				if wtypegood then
-					wud.dynDamageExp = 5.0
+					wud.dynDamageExp = 8.0
 					wud.dynDamageMin = 0
 					if wud.range and wud.range > 1000 then
 						wud.range = wud.range * 5
 					else
 						wud.range = 5000
 					end
-					if (wud.weapontype == "DGun") then wud.range = 300 end
-					if not wud.beamtime then wud.beamtime = 0.18 end
-					if not wud.rgbcolor then wud.rgbcolor = "0.7 0 1" end
-					wud.tolerance = 100000
+					if (wud.weapontype == "DGun") then wud.range = 500 end
+					if wud.areaofeffect and wud.areaofeffect > 36 then
+						wud.areaofeffect = wud.areaofeffect / 3
+					else
+						wud.areaofeffect = 12
+					end
+					local dpsmod = 1
+					if wud.reloadtime then
+						dpsmod = 0.12 / wud.reloadtime
+						wud.reloadtime = 0.12
+						wud.beamtime = 0.12
+					else
+						wud.beamtime = 0.12
+					end
+					if wud.damage then
+						for dname,dud in pairs(wud.damage) do
+							wud.damage[dname] = dud*dpsmod
+						end
+					end
+					wud.tolerance = 10000
 					wud.turret = true
 					wud.accuracy = 0
 					wud.weapontype = "BeamLaser"
 					wud.weaponvelocity = 2250		
-					if not wud.areaofeffect then wud.areaofeffect = 12 end
-					if not wud.corethickness then wud.corethickness = 0.175 end
-					if not wud.thickness then wud.thickness = 1 end
-					if not wud.laserflaresize then wud.laserflaresize = 4 end
+					wud.largeBeamLaser = false
+					if not wud.rgbcolor then wud.rgbcolor = "0.7 0 1" end
+					wud.corethickness = 0.175
+					wud.thickness = 1
+					wud.laserflaresize = 15
 				end
 			end
 		end
@@ -806,12 +829,6 @@ function exe_empworld()
 				end
 			end
 		end
-	  
-		if ud.category then
-			if not string.find(ud.category,"EMPABLE") then
-				ud.category = ud.category .. " EMPABLE"
-			end
-		end
 		
 		if ud.customparams then
 			ud.customparams.paralyzemultiplier = 1
@@ -998,6 +1015,7 @@ function exe_highlander()
 	for name, ud in pairs(UnitDefs) do
 		if ud.canmove and ud.speed then
 			ud.maxthisunit = 1
+			ud.power = 100
 			
 			if ud.health then
 				ud.health = ud.health * target.health_slope + target.health * (1 - target.health_slope)
@@ -1027,12 +1045,6 @@ function exe_highlander()
 			if ud.featuredefs then
 				for fname, fud in pairs(ud.featuredefs) do
 					fud.resurrectable = 0
-				end
-			end
-
-			if ud.category then
-				if string.match(ud.category, "ALL") then
-					ud.power = 100
 				end
 			end
 		end
@@ -1137,11 +1149,6 @@ function exe_sprayworld()
 					wud.areaofeffect = wud.areaofeffect + 200
 					wud.edgeeffectiveness = 0.2
 				end
-				--for k, v in pairs(ud.weapons) do
-				--	if (v.onlytargetcategory == "VTOL") and (string.lower(wname) == string.lower(v.def)) then
-				--		wud.tracks = true
-				--	end
-				--end
 			end
 		end
 	end
