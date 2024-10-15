@@ -1,5 +1,7 @@
 -- MOD WEIGHTS --
 
+-- tweak section 0 --
+
 UnitDefs["armcom"].customparams.ModDefs = {
 	["big_blind"] = { 
 		weight = 50,
@@ -46,7 +48,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["railworld"] = { 
-		weight = 100,
+		weight = 75,
 		modtype = "weap",
 		id = 3,
 		affinity = {
@@ -66,7 +68,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["doomworld"] = { 
-		weight = 100,
+		weight = 50,
 		modtype = "weap",
 		id = 4,
 		affinity = {
@@ -94,7 +96,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["build_only"] = { 
-		weight = 100,
+		weight = 50,
 		modtype = "base",
 		id = 6,
 		affinity = {
@@ -115,7 +117,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["sprayworld"] = { 
-		weight = 100,
+		weight = 50,
 		modtype = "weap",
 		id = 7,
 		affinity = {
@@ -135,7 +137,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["allshield"] = { 
-		weight = 100,
+		weight = 75,
 		modtype = "misc",
 		id = 8,
 		affinity = {
@@ -153,7 +155,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["highlander"] = { 
-		weight = 100,
+		weight = 75,
 		modtype = "misc",
 		id = 9,
 		affinity = {
@@ -172,7 +174,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["empworld"] = { 
-		weight = 100,
+		weight = 50,
 		modtype = "weap",
 		id = 10,
 		affinity = {
@@ -279,7 +281,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["minimass"] = { 
-		weight = 100,
+		weight = 75,
 		modtype = "weap",
 		id = 17,
 		affinity = {
@@ -294,7 +296,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["bounceworld"] = { 
-		weight = 100,
+		weight = 75,
 		modtype = "weap",
 		id = 18,
 		affinity = {
@@ -311,7 +313,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["beamworld"] = { 
-		weight = 100,
+		weight = 50,
 		modtype = "weap",
 		id = 19,
 		affinity = {
@@ -332,7 +334,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		},
 	},
 	["gmpworld"] = {
-		weight = 100,
+		weight = 75,
 		modtype = "weap",
 		id = 20,
 		affinity = {
@@ -360,6 +362,9 @@ UnitDefs["armcom"].customparams.ModDefs = {
 	},
 }
 --------------------------------------------- MOD EXECUTABLES -------------------------------------------
+
+-- tweakdef section 1 --
+
 function exe_gmpworld()
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
@@ -466,7 +471,6 @@ function exe_beamworld()
 							wud.damage[dname] = dud*dpsmod
 						end
 					end
-					wud.tolerance = 10000
 					wud.turret = true
 					wud.accuracy = 0
 					wud.weapontype = "BeamLaser"
@@ -607,6 +611,8 @@ function exe_railworld()
 
 	end
 end
+
+-- tweakdef section 2 --
 
 function exe_doomworld()
 	local rocket_starburst_weapdef = {
@@ -917,6 +923,8 @@ function exe_stockpilage()
 
 	end
 end
+
+-- tweakdef section 3 --
 
 function exe_deathsplode()
 	for name, ud in pairs(UnitDefs) do
@@ -1242,7 +1250,11 @@ function exe_build_only()
 		end
 	end
 end
+
 --------------------------------------------- MOD RANDOMING -------------------------------------------
+
+-- tweakdef section 4 --
+
 function pick_weighted_value(roll) --picks mod from list based on roll
 	for name,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do
 		if roll > md.weight then
