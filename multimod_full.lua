@@ -389,6 +389,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 --------------------------------------------- MOD EXECUTABLES -------------------------------------------
 
 -- tweakdef section 1 --
+
 function exe_t2_only()
 	local factory_boost = {
 		armlab = "armalab",
@@ -431,7 +432,7 @@ function exe_t2_only()
 			ud.energymake = 500
 			ud.energystorage = 10000
 			ud.health = 37000
-			ud.workertime = 3000
+			ud.workertime = 1500
 		end
 	end
 end
@@ -708,7 +709,6 @@ function exe_railworld()
 				end
 			end
 		end
-
 	end
 end
 
