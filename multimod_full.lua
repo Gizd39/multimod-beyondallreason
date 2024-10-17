@@ -90,9 +90,10 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		modtype = "base",
 		id = 5,
 		affinity = {
-			["build_only"] = 0.25,
+			["build_only"] = 0.1,
 			["highlander"] = 0,
 			["elimit"] = 0,
+			["t2_only"] = 0,
 		},
 	},
 	["build_only"] = { 
@@ -103,7 +104,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["big_blind"] = 0.25,
 			["smol_blind"] = 0.25,
 			["doomworld"] = 0.25,
-			["t1_only"] = 0.25,
+			["t1_only"] = 0.1,
 			["sprayworld"] = 0,
 			["highlander"] = 0,
 			["craterage"] = 0,
@@ -114,6 +115,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["minimass"] = 0,
 			["bounceworld"] = 0.25,
 			["gmpworld"] = 0.1,
+			["highseas"] = 0.1,
 		},
 	},
 	["sprayworld"] = { 
@@ -171,6 +173,8 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["stockpilage"] = 2,
 			["ammocost"] = 2,
 			["elimit"] = 2,
+			["highseas"] = 0.25,
+			["t2_only"] = 0.5,
 		},
 	},
 	["empworld"] = { 
@@ -321,7 +325,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["railworld"] = 0,
 			["doomworld"] = 0,
 			["sprayworld"] = 0,
-			["allshield"] = 2, --T
+			["allshield"] = 2,
 			["highlander"] = 2,
 			["empworld"] = 0.25,
 			["craterage"] = 2,
@@ -331,6 +335,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["elimit"] = 2,
 			["bounceworld"] = 0,
 			["gmpworld"] = 0,
+			["t2_only"] = 0.5,
 		},
 	},
 	["gmpworld"] = {
@@ -344,12 +349,32 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["railworld"] = 0.25,
 			["doomworld"] = 0.5,
 			["build_only"] = 0.1,
-			["sprayworld"] = 0.1, --T
+			["sprayworld"] = 0.1, --TOTEST
 			["empworld"] = 0,
 			["craterage"] = 3,
 			["minimass"] = 0.25,
 			["bounceworld"] = 1.5,
 			["beamworld"] = 0,
+		},
+	},
+	["highseas"] = {
+		weight = 75,
+		modtype = "base",
+		id = 21,
+		affinity = {
+			["big_blind"] = 1, --TOTEST
+			["build_only"] = 0.1,
+ 			["highlander"] = 0.25,
+  			["craterage"] = 2,
+		},
+	},
+	["t2_only"] = {
+		weight = 75,
+		modtype = "base",
+		id = 22,
+		affinity = {
+			["t1_only"] = 0,
+			["beamworld"] = 0.5,
 		},
 	},
 
@@ -364,6 +389,81 @@ UnitDefs["armcom"].customparams.ModDefs = {
 --------------------------------------------- MOD EXECUTABLES -------------------------------------------
 
 -- tweakdef section 1 --
+function exe_t2_only()
+	local factory_boost = {
+		armlab = "armalab",
+		armvp = "armavp",
+		armap = "armaap",
+		armsy = "armasy",
+		armhp = 0,
+		armfhp = 0,
+		corlab = "coralab",
+		corvp = "coravp",
+		corap = "coraap",
+		corsy = "corasy",
+		corhp = 0,
+		corfhp = 0,
+		leglab = "legalab",
+		legvp = "legavp",
+		legap = "legaap",
+		legsy = "legasy",
+		leghp = 0,
+		legfhp = 0,
+	}
+
+	for name, ud in pairs(UnitDefs) do
+		for k,v in pairs(factory_boost) do
+			if name == k then
+				ud.maxthisunit = 0
+			end
+		end
+		
+		if (name == "armcom") or (name == "corcom") or (name == "legcom") then
+			for i,b in pairs(ud.buildoptions) do
+				for rold,rnew in pairs(factory_boost) do
+					if b == rold then
+						if rnew then ud.buildoptions[i] = rnew end
+					end
+				end
+			end
+			ud.metalmake = 20
+			ud.metalstorage = 5000
+			ud.energymake = 500
+			ud.energystorage = 10000
+			ud.health = 37000
+			ud.workertime = 3000
+		end
+	end
+end
+
+function exe_highseas()
+	for name, ud in pairs(UnitDefs) do
+		if ud.movementclass and (not string.find(ud.movementclass,"NANO")) then
+			if string.find(ud.movementclass,"ABOT") or string.find(ud.movementclass,"ATANK") then
+				ud.maxthisunit = 0 --disable amphibians
+			elseif string.find(ud.movementclass,"UBOAT") then --landify boats
+				ud.movementclass = "ATANK3"
+				ud.minwaterdepth = 0
+				ud.floater = false
+				ud.maxslope = 16
+			elseif string.find(ud.movementclass,"BOAT") then
+				ud.movementclass = "HOVER3"
+				ud.minwaterdepth = 0
+				ud.floater = true
+				ud.maxslope = 16
+			end
+		elseif not ud.speed then --buildings
+			if ud.minwaterdepth or ud.waterline then --landify sea
+				ud.minwaterdepth = -999
+				ud.maxwaterdepth = 999
+				ud.maxslope = 15
+				ud.waterline = 0
+			elseif ud.workertime and ud.buildoptions then --disable land
+				ud.maxthisunit = 0
+			end
+		end
+	end
+end
 
 function exe_gmpworld()
 	for name, ud in pairs(UnitDefs) do
@@ -1079,11 +1179,6 @@ function exe_allshield(isRepulse)
 		
 		if modshieldhp > 0 then
 			local modshielddef = {
-					--avoidfeature = false,
-					--craterareaofeffect = 0,
-					--craterboost = 0,
-					--cratermult = 0,
-					--edgeeffectiveness = 0.15,
 					name = "PlasmaRepulsor",
 					range = modshieldradius,
 					soundhitwet = "sizzle",
@@ -1319,6 +1414,12 @@ elseif UnitDefs["armcom"].customparams.ModDefs["highlander"].active then
 elseif UnitDefs["armcom"].customparams.ModDefs["allshield"].active then
 	exe_allshield(UnitDefs["armcom"].customparams.ModDefs["bounceworld"].active)
 end
+if UnitDefs["armcom"].customparams.ModDefs["highseas"].active then
+	exe_highseas()
+end
+if UnitDefs["armcom"].customparams.ModDefs["t2_only"].active then
+	exe_t2_only()
+end
 if UnitDefs["armcom"].customparams.ModDefs["t1_only"].active then
 	exe_t1_only()
 end
@@ -1367,3 +1468,42 @@ end
 if UnitDefs["armcom"].customparams.ModDefs["deathsplode"].active then
 	exe_deathsplode()
 end
+
+--------------------------------------------- DEBUG / MOD UI -------------------------------------------
+--debug modecheck "UI"
+
+-- tweakdef section false --
+
+local debugUIList = {
+	[1] = "metalcost",
+	[2] = "energycost",
+	[3] = "health", 
+	[4] = "workertime",
+	[5] = "sightdistance",
+	[6] = "radardistance",
+	[7] = "sonardistance",
+	[8] = "energystorage",
+	[9] = "metalstorage",
+}
+
+UnitDefs["debug_thing_1"] = table.copy(UnitDefs["armsilo"])
+UnitDefs["debug_thing_1"].weapons = nil
+UnitDefs["debug_thing_1"].weapondefs = nil
+UnitDefs["debug_thing_1"].minwaterdepth = 2
+UnitDefs["debug_thing_1"].maxwaterdepth = 1
+for i,name in pairs(debugUIList) do
+	UnitDefs["debug_thing_1"][name] = 666 + i
+end
+
+local i = 0
+for name,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do
+	if md.active then
+		i = i + 1
+		if i > 9 then break end
+		UnitDefs["debug_thing_1"][debugUIList[i]] = md.id
+	end
+end
+
+if UnitDefs["armcom"].buildoptions then	table.insert(UnitDefs["armcom"].buildoptions, "debug_thing_1") end
+if UnitDefs["corcom"].buildoptions then	table.insert(UnitDefs["corcom"].buildoptions, "debug_thing_1") end
+if UnitDefs["legcom"].buildoptions then	table.insert(UnitDefs["legcom"].buildoptions, "debug_thing_1") end
