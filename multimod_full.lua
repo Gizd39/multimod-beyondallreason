@@ -2,7 +2,7 @@
 
 -- tweak section 0 --
 
-UnitDefs["armcom"].customparams.ModDefs = {
+ModDefs = {
 	["big_blind"] = { 
 		weight = 50,
 		modtype = "misc",
@@ -18,6 +18,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["bounceworld"] = 0,
 			["beamworld"] = 0,
 			["gmpworld"] = 2,
+			["toyfast"] = 0,
 		},
 	},
 	["smol_blind"] = { 
@@ -45,6 +46,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["highlander"] = 2,
 			["empworld"] = 0,
 			["stockpilage"] = 2,
+			["toyfast"] = 0.25,
 		},
 	},
 	["railworld"] = { 
@@ -90,9 +92,10 @@ UnitDefs["armcom"].customparams.ModDefs = {
 		modtype = "base",
 		id = 5,
 		affinity = {
-			["build_only"] = 0.25,
+			["build_only"] = 0.1,
 			["highlander"] = 0,
 			["elimit"] = 0,
+			["t2_only"] = 0,
 		},
 	},
 	["build_only"] = { 
@@ -103,7 +106,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["big_blind"] = 0.25,
 			["smol_blind"] = 0.25,
 			["doomworld"] = 0.25,
-			["t1_only"] = 0.25,
+			["t1_only"] = 0.1,
 			["sprayworld"] = 0,
 			["highlander"] = 0,
 			["craterage"] = 0,
@@ -114,6 +117,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["minimass"] = 0,
 			["bounceworld"] = 0.25,
 			["gmpworld"] = 0.1,
+			["highseas"] = 0.1,
 		},
 	},
 	["sprayworld"] = { 
@@ -171,6 +175,9 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["stockpilage"] = 2,
 			["ammocost"] = 2,
 			["elimit"] = 2,
+			["highseas"] = 0.25,
+			["t2_only"] = 0.5,
+			["toyfast"] = 0.25,
 		},
 	},
 	["empworld"] = { 
@@ -193,6 +200,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["bounceworld"] = 0.25,
 			["beamworld"] = 0.25,
 			["gmpworld"] = 0,
+			["toyfast"] = 0,
 		},
 	},
 	["craterage"] = { 
@@ -264,6 +272,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["allshield"] = 2,
 			["stockpilage"] = 2,
 			["elimit"] = 2,
+  			["toyfast"] = 1.5,
 		},
 	},
 	["elimit"] = { 
@@ -293,6 +302,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["craterage"] = 2,
 			["junkscape"] = 2,
 			["gmpworld"] = 0.25,
+			["toyfast"] = 0.25,
 		},
 	},
 	["bounceworld"] = { 
@@ -321,7 +331,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["railworld"] = 0,
 			["doomworld"] = 0,
 			["sprayworld"] = 0,
-			["allshield"] = 2, --T
+			["allshield"] = 2,
 			["highlander"] = 2,
 			["empworld"] = 0.25,
 			["craterage"] = 2,
@@ -331,6 +341,7 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["elimit"] = 2,
 			["bounceworld"] = 0,
 			["gmpworld"] = 0,
+			["t2_only"] = 0.5,
 		},
 	},
 	["gmpworld"] = {
@@ -344,12 +355,46 @@ UnitDefs["armcom"].customparams.ModDefs = {
 			["railworld"] = 0.25,
 			["doomworld"] = 0.5,
 			["build_only"] = 0.1,
-			["sprayworld"] = 0.1, --T
+			["sprayworld"] = 0.1,
 			["empworld"] = 0,
 			["craterage"] = 3,
 			["minimass"] = 0.25,
 			["bounceworld"] = 1.5,
 			["beamworld"] = 0,
+		},
+	},
+	["highseas"] = {
+		weight = 75,
+		modtype = "base",
+		id = 21,
+		affinity = {
+			["build_only"] = 0.1,
+ 			["highlander"] = 0.25,
+  			["craterage"] = 2,
+		},
+	},
+	["t2_only"] = {
+		weight = 75,
+		modtype = "base",
+		id = 22,
+		affinity = {
+			["t1_only"] = 0,
+			["beamworld"] = 0.5,
+		},
+	},
+	["toyfast"] = {
+		weight = 75,
+		modtype = "weap",
+		id = 23,
+		affinity = {
+			["big_blind"] = 0,
+			["hpregen"] = 0.25,
+			["build_only"] = 2,
+ 			["highlander"] = 0.25,
+			["empworld"] = 0,
+			["deathsplode"] = 2,
+  			["minimass"] = 0.25,
+  			["ammocost"] = 1.5, --S
 		},
 	},
 
@@ -365,7 +410,86 @@ UnitDefs["armcom"].customparams.ModDefs = {
 
 -- tweakdef section 1 --
 
+function exe_t2_only()
+
+	local factory_boost = {
+		armlab = "armalab",
+		armvp = "armavp",
+		armap = "armaap",
+		armsy = "armasy",
+		armhp = 0,
+		armfhp = 0,
+		corlab = "coralab",
+		corvp = "coravp",
+		corap = "coraap",
+		corsy = "corasy",
+		corhp = 0,
+		corfhp = 0,
+		leglab = "legalab",
+		legvp = "legavp",
+		legap = "legaap",
+		legsy = "legasy",
+		leghp = 0,
+		legfhp = 0,
+	}
+
+	for name, ud in pairs(UnitDefs) do
+		for k,v in pairs(factory_boost) do
+			if name == k then
+				ud.maxthisunit = 0
+			end
+		end
+		
+		if (name == "armcom") or (name == "corcom") or (name == "legcom") then
+			for i,b in pairs(ud.buildoptions) do
+				for rold,rnew in pairs(factory_boost) do
+					if b == rold then
+						if rnew then ud.buildoptions[i] = rnew end
+					end
+				end
+			end
+			ud.metalmake = 20
+			ud.metalstorage = 5000
+			ud.energymake = 500
+			ud.energystorage = 10000
+			ud.health = 20000
+			ud.workertime = 1500
+		end
+	end
+end
+
+function exe_highseas()
+
+	for name, ud in pairs(UnitDefs) do
+		if ud.movementclass and (not string.find(ud.movementclass,"NANO")) then
+			if string.find(ud.movementclass,"ABOT") or string.find(ud.movementclass,"ATANK") then
+				ud.maxthisunit = 0 --disable amphibians
+			elseif string.find(ud.movementclass,"UBOAT") then --landify boats
+				ud.movementclass = "ATANK3"
+				ud.minwaterdepth = 0
+				ud.floater = false
+				ud.maxslope = 16
+			elseif string.find(ud.movementclass,"BOAT") then
+				ud.movementclass = "HOVER3"
+				ud.minwaterdepth = 0
+				ud.floater = true
+				ud.maxslope = 16
+			end
+		elseif not ud.speed then --buildings
+			if ud.minwaterdepth or ud.waterline then --landify sea
+				ud.minwaterdepth = -999
+				ud.maxwaterdepth = 999
+				ud.maxslope = 15
+				ud.waterline = 0
+			elseif ud.workertime and ud.buildoptions then --disable land
+				ud.maxthisunit = 0
+			end
+		end
+	end
+end
+
 function exe_gmpworld()
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
@@ -427,6 +551,7 @@ function exe_gmpworld()
 end
 
 function exe_beamworld()
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
@@ -487,6 +612,7 @@ function exe_beamworld()
 end
 
 function exe_bounceworld(singleBounce)
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then	
 			for wname, wud in pairs(ud.weapondefs) do
@@ -522,6 +648,7 @@ function exe_bounceworld(singleBounce)
 end
 
 function exe_minimass(bigAoe)
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
@@ -548,6 +675,7 @@ function exe_minimass(bigAoe)
 end
 
 function exe_railworld()
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then	
 			for wname, wud in pairs(ud.weapondefs) do
@@ -608,98 +736,96 @@ function exe_railworld()
 				end
 			end
 		end
-
 	end
 end
 
 -- tweakdef section 2 --
 
 function exe_doomworld()
+
 	local rocket_starburst_weapdef = {
-					areaofeffect = 150,
-					avoidfeature = false,
-					cegtag = "missiletrailmedium-starburst",
-					craterboost = 0,
-					cratermult = 0,
-					edgeeffectiveness = 0.65,
-					explosiongenerator = "custom:genericshellexplosion-large-bomb",
-					firestarter = 100,
-					flighttime = 60,
-					impulseboost = 0.2,
-					impulsefactor = 0.2,
-					metalpershot = 0,
-					model = "cormissile2.s3o",
-					name = "Heavy long-range g2g high-trajectory starburst rocket launcher",
-					noselfdamage = true,
-					range = 1300,
-					reloadtime = 5,
-					soundhit = "xplomed4",
-					soundhitwet = "splslrg",
-					soundstart = "Rockhvy1",
-					smoketrail = false,
-					smokePeriod = 9,
-					smoketime = 45,
-					smokesize = 16.0,
-					smokecolor = 0.7,
-					smokeTrailCastShadow = false,
-					castshadow = false, --projectile
-					texture1 = "null",
-					texture2 = "smoketrailbar",
-					texture3 = "null",
-					tolerance = 4000,
-					turnrate = 4000,
-					weaponacceleration = 100,
-					weapontimer = 5,
-					weapontype = "StarburstLauncher",
-					weaponvelocity = 125,
-					leadLimit = -1, --VARIABLE
-					damage = {
-						default = 1,
-					}
+		areaofeffect = 150,
+		avoidfeature = false,
+		cegtag = "missiletrailmedium-starburst",
+		craterboost = 0,
+		cratermult = 0,
+		edgeeffectiveness = 0.65,
+		explosiongenerator = "custom:genericshellexplosion-large-bomb",
+		firestarter = 100,
+		flighttime = 60,
+		impulseboost = 0.2,
+		impulsefactor = 0.2,
+		metalpershot = 0,
+		model = "cormissile2.s3o",
+		name = "Heavy long-range g2g high-trajectory starburst rocket launcher",
+		noselfdamage = true,
+		range = 1300,
+		reloadtime = 5,
+		soundhit = "xplomed4",
+		soundhitwet = "splslrg",
+		soundstart = "Rockhvy1",
+		smoketrail = false,
+		smokePeriod = 9,
+		smoketime = 45,
+		smokesize = 16.0,
+		smokecolor = 0.7,
+		smokeTrailCastShadow = false,
+		castshadow = false, --projectile
+		texture1 = "null",
+		texture2 = "smoketrailbar",
+		texture3 = "null",
+		tolerance = 4000,
+		turnrate = 4000,
+		weaponacceleration = 100,
+		weapontimer = 5,
+		weapontype = "StarburstLauncher",
+		weaponvelocity = 125,
+		leadLimit = -1,
+		damage = {
+			default = 1,
+		}
 	}
 
 	local rocket_str8_weapdef = {
-					avoidfeature = false,
-					craterareaofeffect = 0,
-					craterboost = 0,
-					cratermult = 0,
-					edgeeffectiveness = 0.15,
-					explosiongenerator = "custom:genericshellexplosion-small",
-					firestarter = 70,
-					impulseboost = 0.123,
-					impulsefactor = 0.123,
-					metalpershot = 0,
-					name = "Medium g2g rocket launcher",
-					smoketrail = false,
-					smokePeriod = 11,
-					smoketime = 28,
-					smokesize = 3.3,
-					smokecolor = 1.0,
-					smokeTrailCastShadow = false,
-					soundhit = "xplosml2",
-					soundhitwet = "splshbig",
-					soundstart = "rocklit1",
-					texture1 = "null",
-					texture2 = "smoketraildark",
-					castshadow = true, --projectile
-					model = "cormissile2fast.s3o",
-					cegtag = "missiletrailsmall-simple",
-					weapontype = "MissileLauncher",
-					noselfdamage = true,
-					areaofeffect = 48,
-					range = 475,
-					reloadtime = 3.8,
-					turret = true,
-					flighttime = 20,
-					weaponacceleration = 100,
-					startvelocity = 75,
-					weaponvelocity = 75,
-					leadLimit = -1, --VARIABLE
-					damage = {
-						default = 1,
-					},
-					--gravityaffected = "true",
-					--mygravity = 0.1
+		avoidfeature = false,
+		craterareaofeffect = 0,
+		craterboost = 0,
+		cratermult = 0,
+		edgeeffectiveness = 0.15,
+		explosiongenerator = "custom:genericshellexplosion-small",
+		firestarter = 70,
+		impulseboost = 0.123,
+		impulsefactor = 0.123,
+		metalpershot = 0,
+		name = "Medium g2g rocket launcher",
+		smoketrail = false,
+		smokePeriod = 11,
+		smoketime = 28,
+		smokesize = 3.3,
+		smokecolor = 1.0,
+		smokeTrailCastShadow = false,
+		soundhit = "xplosml2",
+		soundhitwet = "splshbig",
+		soundstart = "rocklit1",
+		texture1 = "null",
+		texture2 = "smoketraildark",
+		castshadow = true, --projectile
+		model = "cormissile2fast.s3o",
+		cegtag = "missiletrailsmall-simple",
+		weapontype = "MissileLauncher",
+		noselfdamage = true,
+		areaofeffect = 48,
+		range = 475,
+		reloadtime = 3.8,
+		turret = true,
+		flighttime = 20,
+		weaponacceleration = 100,
+		startvelocity = 75,
+		weaponvelocity = 75,
+		leadLimit = -1,
+		damage = {
+			default = 1,
+		},
 	}
 
 	for name, ud in pairs(UnitDefs) do
@@ -707,15 +833,12 @@ function exe_doomworld()
 			for wname, wud in pairs(ud.weapondefs) do
 				local wtypegood = ( 
 					( wud.weapontype == "Cannon" ) or
-					--( wud.weapontype == "BeamLaser" ) or
 					( wud.weapontype == "MissileLauncher" ) or
 					( wud.weapontype == "StarburstLauncher" ) or
 					( wud.weapontype == "LaserCannon" ) or
-					--( wud.weapontype == "TorpedoLauncher" ) or
 					( wud.weapontype == "DGun" ) or
 					( wud.weapontype == "Flame" ) or
 					( wud.weapontype == "notFlame" ) or
-					--( wud.weapontype == "AircraftBomb" ) or
 					( wud.weapontype == "LightningCannon" )
 				)
 				
@@ -812,6 +935,7 @@ function exe_doomworld()
 end
 
 function exe_empworld()
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
@@ -835,7 +959,6 @@ function exe_empworld()
 				end
 			end
 		end
-		
 		if ud.customparams then
 			ud.customparams.paralyzemultiplier = 1
 		end
@@ -843,6 +966,7 @@ function exe_empworld()
 end
 
 function exe_elimit()
+
 	for name, ud in pairs(UnitDefs) do
 		local energymaker = ( ud.energymake or ud.windgenerator or ud.tidalgenerator )
 		if not energymaker and ud.energyupkeep then
@@ -856,21 +980,28 @@ function exe_elimit()
 			else
 				ud.maxthisunit = 5
 			end
+			if ud.featuredefs then
+				for fname, fud in pairs(ud.featuredefs) do
+					fud.resurrectable = 0
+				end
+			end
 		end
 	end
 end
 
-function exe_ammocost()
+function exe_ammocost(extraCost)
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
 				if wud.damage then
 					if wud.damage.default then
 						if wud.energypershot then
-							wud.energypershot = wud.energypershot + wud.damage.default / 2
+							wud.energypershot = (wud.energypershot / 2) + (wud.damage.default / 2)
 						else
 							wud.energypershot = wud.damage.default / 2
 						end
+						if extraCost then wud.energypershot = wud.energypershot * 2 end
 					end
 				end
 			end
@@ -879,17 +1010,16 @@ function exe_ammocost()
 end
 
 function exe_stockpilage()
+
 	for name, ud in pairs(UnitDefs) do
-		if ud.weapondefs then
-		
+		if ud.weapondefs then		
 			local stockpiling = false
 			for wname, wud in pairs(ud.weapondefs) do
 				if wud.stockpile then 
 					stockpiling = true
 					break
 				end
-			end
-			
+			end			
 			if (not stockpiling) then 
 				for wname, wud in pairs(ud.weapondefs) do
 					local wtypegood = ( 
@@ -920,18 +1050,48 @@ function exe_stockpilage()
 				end
 			end
 		end
-
 	end
 end
 
 -- tweakdef section 3 --
 
+function exe_toyfast()
+
+	for name, ud in pairs(UnitDefs) do
+		if ud.speed then 
+			ud.speed = ud.speed * 3
+			ud.reclaimable = false
+		end
+		if ud.turnrate then ud.turnrate = ud.turnrate * 3 end
+		if ud.maxacc then ud.maxacc = ud.maxacc * 3 end
+		if ud.maxdec then ud.maxdec = ud.maxdec * 3 end
+		if ud.maxslope then ud.maxslope = ud.maxslope * 3 end
+		if ud.turninplacespeedlimit then ud.turninplacespeedlimit = ud.turninplacespeedlimit * 3 end
+		if ud.weapondefs then
+			for wname, wud in pairs(ud.weapondefs) do
+				if wud.energypershot then
+					if ( wud.weapontype == "DGun" ) then
+						wud.energypershot = wud.energypershot * 10
+					else
+						wud.energypershot = math.floor(wud.energypershot * 0.15)
+					end
+				end
+				if wud.damage then
+					for dname,dud in pairs(wud.damage) do
+						wud.damage[dname] = math.floor(dud * 0.15)+1							
+					end
+				end
+			end
+		end
+	end
+end
+
 function exe_deathsplode()
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.corpse == "DEAD" then
 			ud.corpse = "HEAP"
-		end
-		
+		end		
 		if ud.explodeas then
 			if ud.health then
 				if (ud.health < 500) then
@@ -962,6 +1122,7 @@ function exe_deathsplode()
 end
 
 function exe_junkscape()
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.featuredefs then
 			for fname, fud in pairs(ud.featuredefs) do
@@ -978,6 +1139,7 @@ function exe_junkscape()
 end
 
 function exe_craterage()
+
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
@@ -993,8 +1155,7 @@ function exe_craterage()
 					( wud.weapontype == "notFlame" ) or
 					( wud.weapontype == "AircraftBomb" ) or
 					( wud.weapontype == "LightningCannon" )
-				)
-				
+				)				
 				if wtypegood then		
 					if wud.areaofeffect then
 						wud.craterareaofeffect = wud.areaofeffect * 2
@@ -1011,6 +1172,7 @@ function exe_craterage()
 end
 
 function exe_highlander()
+
 	local target = {
 		health = 3000,
 		health_slope = 0.66,
@@ -1019,7 +1181,6 @@ function exe_highlander()
 		workertime = 500,
 		workertime_slope = 0.66,
 	}
-
 	for name, ud in pairs(UnitDefs) do
 		if ud.canmove and ud.speed then
 			ud.maxthisunit = 1
@@ -1048,8 +1209,7 @@ function exe_highlander()
 						end
 					end
 				end
-			end
-			
+			end			
 			if ud.featuredefs then
 				for fname, fud in pairs(ud.featuredefs) do
 					fud.resurrectable = 0
@@ -1060,14 +1220,14 @@ function exe_highlander()
 end
 
 function exe_allshield(isRepulse)
+
 	for name, ud in pairs(UnitDefs) do	
 		local modshieldhp = 0
-		local modshieldradius = 80
-		
 		if ud.health then
 			modshieldhp = ud.health
-		end
+		end		
 		
+		local modshieldradius = 80	
 		if ud.collisionvolumescales then
 			modshieldradius = tonumber( string.match(ud.collisionvolumescales,"%d+") ) + 20
 			if modshieldradius > 200 then modshieldradius = 200 end
@@ -1079,46 +1239,41 @@ function exe_allshield(isRepulse)
 		
 		if modshieldhp > 0 then
 			local modshielddef = {
-					--avoidfeature = false,
-					--craterareaofeffect = 0,
-					--craterboost = 0,
-					--cratermult = 0,
-					--edgeeffectiveness = 0.15,
-					name = "PlasmaRepulsor",
-					range = modshieldradius,
-					soundhitwet = "sizzle",
-					weapontype = "Shield",
-					damage = {
-						default = 100,
+				name = "PlasmaRepulsor",
+				range = modshieldradius,
+				soundhitwet = "sizzle",
+				weapontype = "Shield",
+				damage = {
+					default = 100,
+				},
+				shield = {
+					alpha = 0,
+					armortype = "shields",
+					energyupkeep = 0,
+					force = 25,
+					intercepttype = 511,
+					power = modshieldhp,
+					powerregen = modshieldhp/10,
+					powerregenenergy = modshieldhp,
+					radius = modshieldradius,
+					repulser = isRepulse,
+					smart = true,
+					visible = false,
+					startingpower = modshieldhp,
+					visiblerepulse = true,
+					badcolor = {
+						[1] = 0.8,
+						[2] = 0.1,
+						[3] = 0.8,
+						[4] = 1,
 					},
-					shield = {
-						alpha = 0,
-						armortype = "shields",
-						energyupkeep = 0,
-						force = 25,
-						intercepttype = 511,
-						power = modshieldhp,
-						powerregen = modshieldhp/10,
-						powerregenenergy = modshieldhp,
-						radius = modshieldradius,
-						repulser = isRepulse,
-						smart = true,
-						visible = false,
-						startingpower = modshieldhp,
-						visiblerepulse = true,
-						badcolor = {
-							[1] = 0.8,
-							[2] = 0.1,
-							[3] = 0.8,
-							[4] = 1,
-						},
-						goodcolor = {
-							[1] = 0.4,
-							[2] = 0.8,
-							[3] = 0,
-							[4] = 1,
-						},
+					goodcolor = {
+						[1] = 0.4,
+						[2] = 0.8,
+						[3] = 0,
+						[4] = 1,
 					},
+				},
 			}
 		
 			if ud.weapondefs then
@@ -1166,6 +1321,7 @@ function exe_big_blind()
 
 	for name, ud in pairs(UnitDefs) do
 		ud.sightdistance = 0
+		ud.airsightdistance = 0
 	end
 end
 
@@ -1173,6 +1329,7 @@ function exe_smol_blind()
 
 	for name, ud in pairs(UnitDefs) do
 		ud.sightdistance = 70
+		ud.airsightdistance = 105
 	end
 end
 
@@ -1256,7 +1413,7 @@ end
 -- tweakdef section 4 --
 
 function pick_weighted_value(roll) --picks mod from list based on roll
-	for name,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do
+	for name,md in pairs(ModDefs) do
 		if roll > md.weight then
 			roll = roll - md.weight
 		else
@@ -1270,26 +1427,28 @@ function roll_a_mod(riggedName)
 	local rolled_mod = "vanilla"
 	if not riggedName then
 		local rng_weight_total = 0
-		for name,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do 
+		for name,md in pairs(ModDefs) do 
 			rng_weight_total = rng_weight_total + md.weight
 		end
-		rolled_mod = pick_weighted_value( math.random(rng_weight_total) ) --pick a mod
+		if rng_weight_total > 0 then
+			rolled_mod = pick_weighted_value( math.random(rng_weight_total) ) --pick a mod
+		end
 	else
 		rolled_mod = riggedName
 	end
 	
-	UnitDefs["armcom"].customparams.ModDefs[rolled_mod].active = true
-	
-	UnitDefs["armcom"].customparams.ModDefs[rolled_mod].weight = 0 --remove the mod from pool
-	
-	for aname,aff in pairs(UnitDefs["armcom"].customparams.ModDefs[rolled_mod].affinity) do --apply affinities
-		UnitDefs["armcom"].customparams.ModDefs[aname].weight = UnitDefs["armcom"].customparams.ModDefs[aname].weight * aff
+	if rolled_mod ~= "vanilla" then
+		ModDefs[rolled_mod].active = true
+		ModDefs[rolled_mod].weight = 0 --remove the mod from pool
+		for aname,aff in pairs(ModDefs[rolled_mod].affinity) do --apply affinities
+			ModDefs[aname].weight = ModDefs[aname].weight * aff
+		end
 	end
 	
 	return rolled_mod
 end
 
-for mname,md in pairs(UnitDefs["armcom"].customparams.ModDefs) do
+for mname,md in pairs(ModDefs) do
 	md.active = false
 end
 
@@ -1302,68 +1461,133 @@ roll_a_mod(false)
 roll_a_mod(false)
 
 --------------------------------------------- MOD EXECUTION -------------------------------------------
-if UnitDefs["armcom"].customparams.ModDefs["doomworld"].active then
+if ModDefs["doomworld"].active then
 	exe_doomworld()
 end
-if UnitDefs["armcom"].customparams.ModDefs["stockpilage"].active then
+if ModDefs["stockpilage"].active then
 	exe_stockpilage()
 end
-if UnitDefs["armcom"].customparams.ModDefs["elimit"].active then
+if ModDefs["elimit"].active then
 	exe_elimit()
 end
-if UnitDefs["armcom"].customparams.ModDefs["allshield"].active and UnitDefs["armcom"].customparams.ModDefs["highlander"].active then --support for different orders
+if ModDefs["allshield"].active and ModDefs["highlander"].active then --support for different orders
 	exe_highlander()
-	exe_allshield(UnitDefs["armcom"].customparams.ModDefs["bounceworld"].active)
-elseif UnitDefs["armcom"].customparams.ModDefs["highlander"].active then
+	exe_allshield(ModDefs["bounceworld"].active)
+elseif ModDefs["highlander"].active then
 	exe_highlander()
-elseif UnitDefs["armcom"].customparams.ModDefs["allshield"].active then
-	exe_allshield(UnitDefs["armcom"].customparams.ModDefs["bounceworld"].active)
+elseif ModDefs["allshield"].active then
+	exe_allshield(ModDefs["bounceworld"].active)
 end
-if UnitDefs["armcom"].customparams.ModDefs["t1_only"].active then
+if ModDefs["highseas"].active then
+	exe_highseas()
+end
+if ModDefs["t2_only"].active then
+	exe_t2_only()
+end
+if ModDefs["t1_only"].active then
 	exe_t1_only()
 end
-if UnitDefs["armcom"].customparams.ModDefs["build_only"].active then
+if ModDefs["build_only"].active then
 	exe_build_only()
 end
-if UnitDefs["armcom"].customparams.ModDefs["beamworld"].active then
+if ModDefs["beamworld"].active then
 	exe_beamworld()
 end
-if UnitDefs["armcom"].customparams.ModDefs["railworld"].active then
+if ModDefs["railworld"].active then
 	exe_railworld()
 end
-if UnitDefs["armcom"].customparams.ModDefs["gmpworld"].active then
+if ModDefs["gmpworld"].active then
 	exe_gmpworld()
 end
-if UnitDefs["armcom"].customparams.ModDefs["sprayworld"].active then
+if ModDefs["sprayworld"].active then
 	exe_sprayworld()
 end
-if UnitDefs["armcom"].customparams.ModDefs["empworld"].active then
+if ModDefs["empworld"].active then
 	exe_empworld()
 end
-if UnitDefs["armcom"].customparams.ModDefs["craterage"].active then
+if ModDefs["craterage"].active then
 	exe_craterage()
 end
-if UnitDefs["armcom"].customparams.ModDefs["ammocost"].active then
-	exe_ammocost()
+if ModDefs["minimass"].active then
+	exe_minimass(ModDefs["railworld"].active)
 end
-if UnitDefs["armcom"].customparams.ModDefs["minimass"].active then
-	exe_minimass(UnitDefs["armcom"].customparams.ModDefs["railworld"].active)
+if ModDefs["bounceworld"].active then
+	exe_bounceworld(ModDefs["railworld"].active)
 end
-if UnitDefs["armcom"].customparams.ModDefs["bounceworld"].active then
-	exe_bounceworld(UnitDefs["armcom"].customparams.ModDefs["railworld"].active)
-end
-if UnitDefs["armcom"].customparams.ModDefs["big_blind"].active then
+if ModDefs["big_blind"].active then
 	exe_big_blind()
 end
-if UnitDefs["armcom"].customparams.ModDefs["smol_blind"].active then
+if ModDefs["smol_blind"].active then
 	exe_smol_blind()
 end
-if UnitDefs["armcom"].customparams.ModDefs["hpregen"].active then
+if ModDefs["hpregen"].active then
 	exe_hpregen()
 end
-if UnitDefs["armcom"].customparams.ModDefs["junkscape"].active then
+if ModDefs["junkscape"].active then
 	exe_junkscape()
 end
-if UnitDefs["armcom"].customparams.ModDefs["deathsplode"].active then
+if ModDefs["deathsplode"].active then
 	exe_deathsplode()
+end
+if ModDefs["toyfast"].active then
+	exe_toyfast()
+end
+if ModDefs["ammocost"].active then
+	exe_ammocost(ModDefs["toyfast"].active)
+end
+
+--------------------------------------------- DEBUG / MOD UI -------------------------------------------
+--debug modecheck "UI"
+
+-- tweakdef section false --
+
+local debugUIList = {
+	[1] = "metalcost",
+	[2] = "energycost",
+	[3] = "health", 
+	[4] = "workertime",
+	[5] = "sightdistance",
+	[6] = "radardistance",
+	[7] = "sonardistance",
+	[8] = "energystorage",
+	[9] = "metalstorage",
+}
+
+UnitDefs["debug_thing_1"] = table.copy(UnitDefs["armsilo"])
+UnitDefs["debug_thing_1"].weapons = nil
+UnitDefs["debug_thing_1"].weapondefs = nil
+UnitDefs["debug_thing_1"].minwaterdepth = 2
+UnitDefs["debug_thing_1"].maxwaterdepth = 1
+UnitDefs["debug_thing_2"] = table.copy(UnitDefs["debug_thing_1"])
+UnitDefs["debug_thing_2"].buildpic = "CORSILO.DDS"
+for i,name in pairs(debugUIList) do
+	UnitDefs["debug_thing_1"][name] = 666 + i
+	UnitDefs["debug_thing_2"][name] = 675 + i --666+#debugUIList
+end
+
+local i = 0
+for name,md in pairs(ModDefs) do
+	if md.active then
+		i = i + 1
+		if i < 10 then
+			UnitDefs["debug_thing_1"][debugUIList[i]] = md.id
+		elseif i < 19 then
+			UnitDefs["debug_thing_2"][debugUIList[i-9]] = md.id
+		else
+			break
+		end
+	end
+end
+
+if UnitDefs["armcom"].buildoptions then	
+	table.insert(UnitDefs["armcom"].buildoptions, "debug_thing_1")
+	table.insert(UnitDefs["armcom"].buildoptions, "debug_thing_2")
+end
+if UnitDefs["corcom"].buildoptions then	
+	table.insert(UnitDefs["corcom"].buildoptions, "debug_thing_1")
+	table.insert(UnitDefs["corcom"].buildoptions, "debug_thing_2")
+end
+if UnitDefs["legcom"].buildoptions then	
+	table.insert(UnitDefs["legcom"].buildoptions, "debug_thing_1")
+	table.insert(UnitDefs["legcom"].buildoptions, "debug_thing_2")
 end
