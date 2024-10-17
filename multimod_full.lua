@@ -355,7 +355,7 @@ ModDefs = {
 			["railworld"] = 0.25,
 			["doomworld"] = 0.5,
 			["build_only"] = 0.1,
-			["sprayworld"] = 0.1, --TOTEST
+			["sprayworld"] = 0.1,
 			["empworld"] = 0,
 			["craterage"] = 3,
 			["minimass"] = 0.25,
@@ -368,7 +368,6 @@ ModDefs = {
 		modtype = "base",
 		id = 21,
 		affinity = {
-			["big_blind"] = 1, --TOTEST
 			["build_only"] = 0.1,
  			["highlander"] = 0.25,
   			["craterage"] = 2,
@@ -384,7 +383,7 @@ ModDefs = {
 		},
 	},
 	["toyfast"] = {
-		weight = 50,
+		weight = 75,
 		modtype = "weap",
 		id = 23,
 		affinity = {
@@ -453,7 +452,7 @@ function exe_t2_only()
 			ud.metalstorage = 5000
 			ud.energymake = 500
 			ud.energystorage = 10000
-			ud.health = 37000
+			ud.health = 20000
 			ud.workertime = 1500
 		end
 	end
@@ -1063,18 +1062,18 @@ function exe_toyfast()
 			ud.speed = ud.speed * 3
 			ud.reclaimable = false
 		end
-		if ud.turnrate then ud.turnrate = ud.turnrate * 3
-		if ud.maxacc then ud.maxacc = ud.maxacc * 3
-		if ud.maxdec then ud.maxdec = ud.maxdec * 3
-		if ud.maxslope then ud.maxslope = ud.maxslope * 3
-		if ud.turninplacespeedlimit then ud.turninplacespeedlimit = ud.turninplacespeedlimit * 3
+		if ud.turnrate then ud.turnrate = ud.turnrate * 3 end
+		if ud.maxacc then ud.maxacc = ud.maxacc * 3 end
+		if ud.maxdec then ud.maxdec = ud.maxdec * 3 end
+		if ud.maxslope then ud.maxslope = ud.maxslope * 3 end
+		if ud.turninplacespeedlimit then ud.turninplacespeedlimit = ud.turninplacespeedlimit * 3 end
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
 				if wud.energypershot then
 					if ( wud.weapontype == "DGun" ) then
 						wud.energypershot = wud.energypershot * 10
 					else
-						wud.energypershot = wud.energypershot * 0.15
+						wud.energypershot = math.floor(wud.energypershot * 0.15)
 					end
 				end
 				if wud.damage then
@@ -1322,6 +1321,7 @@ function exe_big_blind()
 
 	for name, ud in pairs(UnitDefs) do
 		ud.sightdistance = 0
+		ud.airsightdistance = 0
 	end
 end
 
@@ -1329,6 +1329,7 @@ function exe_smol_blind()
 
 	for name, ud in pairs(UnitDefs) do
 		ud.sightdistance = 70
+		ud.airsightdistance = 105
 	end
 end
 
