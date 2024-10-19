@@ -66,7 +66,7 @@ ModDefs = {
 			["minimass"] = 1, --S
 			["bounceworld"] = 1, --S
 			["beamworld"] = 0,
-			["gmpworld"] = 0.2,
+			["gmpworld"] = 0,
 		},
 	},
 	["doomworld"] = { 
@@ -352,7 +352,7 @@ ModDefs = {
 			["big_blind"] = 3,
 			["smol_blind"] = 3,
 			["hpregen"] = 0.5,
-			["railworld"] = 0.25,
+			["railworld"] = 0,
 			["doomworld"] = 0.5,
 			["build_only"] = 0.1,
 			["sprayworld"] = 0.1,
@@ -480,7 +480,7 @@ function exe_highseas()
 				ud.minwaterdepth = -999
 				ud.maxwaterdepth = 999
 				ud.maxslope = 15
-				ud.waterline = 0
+				--ud.waterline = 0
 			elseif ud.workertime and ud.buildoptions then --disable land
 				ud.maxthisunit = 0
 			end
@@ -507,7 +507,7 @@ function exe_gmpworld()
 				)
 				
 				if wtypegood then
-					wud.sprayAngle = 5600
+					wud.sprayangle = 5600
 					if wud.projectiles then
 						wud.projectiles = wud.projectiles * 5
 					else
@@ -523,7 +523,7 @@ function exe_gmpworld()
 						wud.fireSubmersed = true
 						wud.weapontype = "MissileLauncher"
 					elseif ( wud.weapontype == "StarburstLauncher" ) then
-						wud.sprayAngle = 4000
+						wud.sprayangle = 4000
 						wud.flighttime = 10
 						wud.trajectoryheight = 2
 						wud.weapontimer = 1
@@ -584,20 +584,26 @@ function exe_beamworld()
 						wud.areaofeffect = 12
 					end
 					local dpsmod = 1
-					if wud.reloadtime then
+					if wud.stockpiletime then
+						dpsmod = 0.12 / wud.stockpiletime
+						wud.stockpiletime = 0.12
+						wud.reloadtime = 0.12
+						wud.beamtime = 0.12
+					elseif wud.reloadtime then
 						dpsmod = 0.12 / wud.reloadtime
 						wud.reloadtime = 0.12
 						wud.beamtime = 0.12
-					else
-						wud.beamtime = 0.12
 					end
+					wud.beamtime = 0.12
 					if wud.damage then
 						for dname,dud in pairs(wud.damage) do
 							wud.damage[dname] = dud*dpsmod
 						end
 					end
+					if wud.energypershot then wud.energypershot = math.floor(wud.energypershot * dpsmod) end
 					wud.turret = true
 					wud.accuracy = 0
+					wud.sprayangle = 0
 					wud.weapontype = "BeamLaser"
 					wud.weaponvelocity = 2250		
 					wud.largeBeamLaser = false
@@ -611,7 +617,7 @@ function exe_beamworld()
 	end
 end
 
-function exe_bounceworld(singleBounce)
+function exe_bounceworld()
 
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then	
@@ -636,7 +642,7 @@ function exe_bounceworld(singleBounce)
 					wud.bounceSlip = 0.93
 					wud.bounceRebound = 0.85
 					wud.burnblow = false
-					if singleBounce then
+					if ModDefs["railworld"].active then
 						wud.numBounce = 2
 					else
 						wud.numBounce = 10
@@ -647,13 +653,13 @@ function exe_bounceworld(singleBounce)
 	end
 end
 
-function exe_minimass(bigAoe)
+function exe_minimass()
 
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
 			for wname, wud in pairs(ud.weapondefs) do
-				if wud.areaofeffect and bigAoe then
-					wud.areaofeffect = wud.areaofeffect * 5
+				if wud.areaofeffect then
+					wud.areaofeffect = wud.areaofeffect * 2
 					wud.edgeeffectiveness = 0
 					wud.explosionSpeed = 2000
 				end
@@ -661,7 +667,7 @@ function exe_minimass(bigAoe)
 				wud.impulseboost = 1
 				wud.impulsefactor = 4
 				
-				if wud.damage then
+				if wud.damage and (not ModDefs["toyfast"].active) then
 					for dname,dud in pairs(wud.damage) do
 						wud.damage[dname] = math.floor(dud * 0.33)
 					end
@@ -695,6 +701,7 @@ function exe_railworld()
 				
 				if wtypegood then
 					wud.accuracy = 0
+					wud.sprayangle = 0
 					wud.areaofeffect = 16
 					wud.edgeEffectiveness = 1
 					wud.craterMult = 0
@@ -989,7 +996,7 @@ function exe_elimit()
 	end
 end
 
-function exe_ammocost(extraCost)
+function exe_ammocost()
 
 	for name, ud in pairs(UnitDefs) do
 		if ud.weapondefs then
@@ -1001,7 +1008,8 @@ function exe_ammocost(extraCost)
 						else
 							wud.energypershot = wud.damage.default / 2
 						end
-						if extraCost then wud.energypershot = wud.energypershot * 2 end
+						if ModDefs["toyfast"].active then wud.energypershot = wud.energypershot * 2 end
+						wud.energypershot = math.floor(wud.energypershot)
 					end
 				end
 			end
@@ -1042,7 +1050,7 @@ function exe_stockpilage()
 							wud.stockpiletime = wud.reloadtime * 2
 							wud.reloadtime = wud.reloadtime * 0.5
 							if not ud.customparams then ud.customparams = {} end
-							ud.customparams.stockpilelimit = math.floor(120 / wud.stockpiletime)
+							ud.customparams.stockpilelimit = math.floor(120 / wud.stockpiletime)+1
 							stockpiling = true
 							break
 						end
@@ -1219,7 +1227,7 @@ function exe_highlander()
 	end
 end
 
-function exe_allshield(isRepulse)
+function exe_allshield()
 
 	for name, ud in pairs(UnitDefs) do	
 		local modshieldhp = 0
@@ -1233,7 +1241,7 @@ function exe_allshield(isRepulse)
 			if modshieldradius > 200 then modshieldradius = 200 end
 			if modshieldradius < 80 then modshieldradius = 80 end
 		end
-		if isRepulse then
+		if ModDefs["bounceworld"].active then
 			modshieldradius = modshieldradius + 30
 		end
 		
@@ -1256,7 +1264,7 @@ function exe_allshield(isRepulse)
 					powerregen = modshieldhp/10,
 					powerregenenergy = modshieldhp,
 					radius = modshieldradius,
-					repulser = isRepulse,
+					repulser = ModDefs["bounceworld"].active,
 					smart = true,
 					visible = false,
 					startingpower = modshieldhp,
@@ -1454,7 +1462,7 @@ end
 
 --------------------------------------------- THINGDOING - USER PART -------------------------------------------
 	--picking specific mods ignores weights so it can force "bad" combos,
-	--thus always pick first random later
+	--thus always pick first and random later
 --roll_a_mod("deathsplode") --pick a specific mod
 roll_a_mod(false) --pick 3 random mods
 roll_a_mod(false)
@@ -1472,11 +1480,11 @@ if ModDefs["elimit"].active then
 end
 if ModDefs["allshield"].active and ModDefs["highlander"].active then --support for different orders
 	exe_highlander()
-	exe_allshield(ModDefs["bounceworld"].active)
+	exe_allshield()
 elseif ModDefs["highlander"].active then
 	exe_highlander()
 elseif ModDefs["allshield"].active then
-	exe_allshield(ModDefs["bounceworld"].active)
+	exe_allshield()
 end
 if ModDefs["highseas"].active then
 	exe_highseas()
@@ -1509,10 +1517,10 @@ if ModDefs["craterage"].active then
 	exe_craterage()
 end
 if ModDefs["minimass"].active then
-	exe_minimass(ModDefs["railworld"].active)
+	exe_minimass()
 end
 if ModDefs["bounceworld"].active then
-	exe_bounceworld(ModDefs["railworld"].active)
+	exe_bounceworld()
 end
 if ModDefs["big_blind"].active then
 	exe_big_blind()
@@ -1533,7 +1541,7 @@ if ModDefs["toyfast"].active then
 	exe_toyfast()
 end
 if ModDefs["ammocost"].active then
-	exe_ammocost(ModDefs["toyfast"].active)
+	exe_ammocost()
 end
 
 --------------------------------------------- DEBUG / MOD UI -------------------------------------------
